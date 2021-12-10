@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  overscroll-behavior: none;
+}
+
+canvas {
+  display: block;
+}
+
+/*# sourceMappingURL=main.css.map*/
