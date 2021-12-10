@@ -1,6 +1,5 @@
 import './style.css';
 import * as THREE from 'three';
-import gsap from 'gsap';
 
 const CAMERA_POSITIONS = [
    [0,0,1.5],
@@ -11,7 +10,7 @@ const CAMERA_POSITIONS = [
    [0,0,-1.5],
 ]
 
-const NUMBER_OF_CAMERA_AXIS = 7;
+const NUMBER_OF_CAMERA_AXIS = 6;
 let camera : THREE.ArrayCamera;
 let renderer : THREE.WebGLRenderer;
 let scene : THREE.Scene = new THREE.Scene();
@@ -32,18 +31,15 @@ function init() {
     const cameras = [];
     for ( let y = 0; y < NUMBER_OF_CAMERA_AXIS; y ++ ) {
         for ( let x = 0; x < NUMBER_OF_CAMERA_AXIS; x ++ ) {
-        const subcamera = new THREE.PerspectiveCamera( 40, ASPECT_RATIO, 0.1, 10 );
+        const subcamera = new THREE.PerspectiveCamera( 40, ASPECT_RATIO, 0.1, 20 );
         (subcamera as any).viewport = new THREE.Vector4( Math.floor( x * WIDTH ), Math.floor( y * HEIGHT ), Math.ceil( WIDTH ), Math.ceil( HEIGHT ) );
-        subcamera.position.x = ( x / NUMBER_OF_CAMERA_AXIS ) + CAMERA_POSITIONS[(x+ y) % CAMERA_POSITIONS.length][0];
-        subcamera.position.y = ( y / NUMBER_OF_CAMERA_AXIS ) + CAMERA_POSITIONS[(x+ y) % CAMERA_POSITIONS.length][1];
-        subcamera.position.z =  CAMERA_POSITIONS[(x+ y) % CAMERA_POSITIONS.length][2];
+        subcamera.position.x = ( x / NUMBER_OF_CAMERA_AXIS ) + CAMERA_POSITIONS[(x+y) % CAMERA_POSITIONS.length][0];
+        subcamera.position.y = ( y / NUMBER_OF_CAMERA_AXIS ) + CAMERA_POSITIONS[(x+y) % CAMERA_POSITIONS.length][1];
+        subcamera.position.z =  CAMERA_POSITIONS[(x+y) % CAMERA_POSITIONS.length][2];
 
-        /*subcamera.position.x = ( x / NUMBER_OF_CAMERA_AXIS ) - 0.5;
-        subcamera.position.y = 0.5 - ( y / NUMBER_OF_CAMERA_AXIS );
-        subcamera.position.z = 1.5;*/
-
-        subcamera.position.multiplyScalar(2);
+        subcamera.position.multiplyScalar(3);
         subcamera.lookAt(0, 0, 0);
+        //subcamera.position.z = 0;
         console.log(subcamera.rotation)
         subcamera.updateMatrixWorld();
         cameras.push( subcamera );
@@ -53,27 +49,16 @@ function init() {
     camera = new THREE.ArrayCamera(cameras);
     camera.position.z = 3;
 
-    const helper = new THREE.CameraHelper( camera );
-//scene.add( helper );
-
-
-    // Axe Helper
-    const axesHelper = new THREE.AxesHelper(3);
-    //scene.add(axesHelper);
-
-
     // Lights
-    scene.add(new THREE.AmbientLight("#c8a915"));
+    scene.add(new THREE.AmbientLight("#FFFFFF"));
 
     // Objects
 
     // background
-    const geometryBackground = new THREE.BoxGeometry(1, 1,4);
-    const materialBackground = new THREE.MeshBasicMaterial({color: "#FFF000"}) //new THREE.MeshPhongMaterial( { color: 0xFFFFFF } );
+    const geometryBackground = new THREE.BoxGeometry(10,10,10);
+    const materialBackground = new THREE.MeshPhongMaterial( { color: 0x00FAAFAA, side: THREE.BackSide } );
     let background = new THREE.Mesh( geometryBackground, materialBackground );
-    background.receiveShadow = true;
-    background.position.set(0,0, -1)
-    //scene.add(background);
+    scene.add(background);
 
     // box
     const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
@@ -88,7 +73,6 @@ function init() {
     box = new THREE.Mesh(geometry, materials);
     box.castShadow = true;
     box.receiveShadow = true;
-    box.position.set(0,0,0);
     scene.add(box);
 
     // Instanciate Renderer
@@ -110,6 +94,7 @@ function onWindowResize() {
 function animate() {
     box.rotation.x += 0.005;
     box.rotation.z += 0.01;
+
     renderer.render( scene, camera );
 
     requestAnimationFrame(animate);
