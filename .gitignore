@@ -1,1 +1,8 @@
 node_modules/**
+bundler/**
+src/**
+static/**
+package.json
+readme.md
+tsconfig.json
+yarn.lock
