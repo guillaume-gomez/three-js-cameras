@@ -1,4 +1,4 @@
-# POV-ThreeJs
+# three-js-cameras
 
 Render a scene with multiple cameras.
 
